@@ -50,11 +50,27 @@ pub fn new_uint(n: usize) -> BigUint {
 pub fn new_prime(n: usize) -> BigUint {
     let mut rng = rand::thread_rng();
     loop {
-        let mut candidate: BigUint = rng.gen_biguint(n);
+        // Make mutable and set LSB and MSB
+        let candidate: BigUint = rng.gen_biguint(n);
         //candidate.set_bit(0, true);
         //candidate.set_bit((n-1) as u32, true);
         if candidate.is_even() == false && is_prime(&candidate) == true { 
             return candidate;
+        }
+    }
+}
+
+pub fn safe_prime(n: usize) -> BigUint {
+    let mut rng = rand::thread_rng();
+    loop {
+        // Make mutable and set LSB and MSB
+        let candidate: BigUint = rng.gen_biguint(n);
+        //candidate.set_bit(0, true);
+        //candidate.set_bit((n-1) as u32, true);
+        if candidate.is_even() == false && is_prime(&candidate) == true {
+            if is_safe_prime(&candidate){
+                return candidate;
+            }
         }
     }
 }
@@ -175,6 +191,21 @@ fn is_prime(candidate: &BigUint) -> bool {
         return false;
     }
     true
+}
+
+fn is_safe_prime(number: &BigUint) -> bool {
+    let one = BigUint::one();
+    let two = &one + &one;
+
+    let x = number * two;
+    let y = x + one;
+    
+    if is_prime(&y) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 
