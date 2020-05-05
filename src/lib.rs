@@ -11,17 +11,18 @@ use num_traits::*;
 
 
 pub struct Generator;
+pub struct Verification;
 
 impl Generator {
     /// # Generate Large Unsigned Integer
     /// This function takes an input (n) for the number of bits the unsigned    integer should be
     /// 
     /// ```
-    /// use num_primes::new_uint;
+    /// use num_primes::Generator;
     ///
     /// fn main() {
     ///     // Generate Large Random Unsigned Integer of 1024 bits
-    ///     let x = new_uint(1024);
+    ///     let x = Generator::new_uint(1024);
     /// 
     ///     // Print Integer
     ///     println!("Large Unsigned Integer: {}",x);
@@ -36,12 +37,12 @@ impl Generator {
     /// This function generates a prime number of n-bits using three primality  tests.
     /// 
     /// ```
-    /// use num_primes::new_prime;
+    /// use num_primes::Generator;
     /// 
     /// fn main(){
     ///     // Generate Two Primes (p,q) of 512 bits
-    ///     let p = new_prime(512);
-    ///     let q = new_prime(512);
+    ///     let p = Generator::new_prime(512);
+    ///     let q = Generator::new_prime(512);
     /// 
     ///     // Multiply p and q and return n
     ///     let n = p * q;
@@ -76,11 +77,30 @@ impl Generator {
                     let two = &one + &one;
 
                     let x = &candidate * two;
-                    let p = x + one;
+                    let safe_prime = x + one;
 
-                    return (p,candidate);
+                    return (safe_prime,candidate);
                 }
             }
+        }
+    }
+}
+
+impl Verification {
+    pub fn is_prime(n: &BigUint) -> bool {
+        return is_prime(n);
+    }
+    pub fn is_composite(n: &BigUint) -> bool {
+        let x: bool = is_prime(n);
+        
+        if x == true {
+            return false
+        }
+        else if x == false {
+            return true
+        }
+        else {
+            panic!("An Error Has Occured On Checking Composite Number");
         }
     }
 }
