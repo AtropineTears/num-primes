@@ -74,22 +74,17 @@ impl Generator {
     ///     let (p,q) = Generator::safe_prime(64);
     /// }
     /// ```
-    pub fn safe_prime(n: usize) -> (BigUint,BigUint) {
+    pub fn safe_prime(n: usize) -> BigUint {
         let mut rng = rand::thread_rng();
         loop {
             // Make mutable and set LSB and MSB
             let candidate: BigUint = rng.gen_biguint(n);
             //candidate.set_bit(0, true);
             //candidate.set_bit((n-1) as u32, true);
-            if candidate.is_even() == false && is_prime(&candidate) == true {
+            if is_prime(&candidate) == true {
+                // checks with (p-1/n)
                 if is_safe_prime(&candidate){
-                    let one = BigUint::one();
-                    let two = &one + &one;
-
-                    let x = &candidate * two;
-                    let safe_prime = x + one;
-
-                    return (safe_prime,candidate);
+                    return candidate;
                 }
             }
         }
@@ -272,7 +267,8 @@ fn is_prime(candidate: &BigUint) -> bool {
 }
 
 // p = 2q + 1
-fn is_safe_prime(number: &BigUint) -> bool {    
+#[deprecated]
+fn is_safe_prime_add(number: &BigUint) -> bool {    
     // number == q
     
     let one = BigUint::one();
@@ -291,8 +287,19 @@ fn is_safe_prime(number: &BigUint) -> bool {
     }
 }
 
-fn safe_prime_sieve(number: &BigUint) {
+// (p - 1)/2
+fn is_safe_prime(number: &BigUint) -> bool {
+    let one = BigUint::one();
+    let two = &one + &one;
 
+    let result = (number - one) / two;
+
+    if is_prime(&result) {
+        return true
+    }
+    else {
+        return false
+    }
 }
 
 fn vsn(m: &BigUint,n: &BigUint, c: &BigUint){
@@ -316,7 +323,7 @@ fn generate(){
 #[test]
 fn generate_safe_prime(){
     // p = 2q + 1 where p is safe prime
-    let (_p,_q) = Generator::safe_prime(512);
+    let p = Generator::safe_prime(512);
 }
 
 #[test]
