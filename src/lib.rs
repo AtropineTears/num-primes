@@ -3,15 +3,15 @@ extern crate rand;
 extern crate num_bigint as bigint;
 
 
-use num::Integer;
+use num::{Integer,Float};
 use std::ops::Sub;
 use bigint::{BigUint,RandBigInt};
 use num_traits::{Zero, One};
 use num_traits::*;
 
-
 pub struct Generator;
 pub struct Verification;
+pub struct Factorization;
 
 impl Generator {
     /// # Generate Large Unsigned Integer
@@ -58,12 +58,22 @@ impl Generator {
             let candidate: BigUint = rng.gen_biguint(n);
             //candidate.set_bit(0, true);
             //candidate.set_bit((n-1) as u32, true);
-            if candidate.is_even() == false && is_prime(&candidate) == true { 
+            if is_prime(&candidate) == true { 
                 return candidate;
             }
         }
     }
 
+    /// # Generate Safe Primes
+    /// This function will generate safe prime numbers, or numbers of the form p = 2q + 1 where p is the safe prime.
+    /// ```
+    /// use num_primes::Generator;
+    /// 
+    /// fn main(){
+    ///     // p = 2q + 1 where p is the safe prime. This generates a number of 64 bits.
+    ///     let (p,q) = Generator::safe_prime(64);
+    /// }
+    /// ```
     pub fn safe_prime(n: usize) -> (BigUint,BigUint) {
         let mut rng = rand::thread_rng();
         loop {
@@ -102,6 +112,41 @@ impl Verification {
         else {
             panic!("An Error Has Occured On Checking Composite Number");
         }
+    }
+    pub fn is_smooth_number(){
+
+    }
+}
+
+impl Factorization {
+    pub fn prime_factor(mut n: BigUint) -> Option<BigUint> {
+        
+        let one = BigUint::one();
+        let two = &one + &one;
+        
+        // STEP 1 | n divided by 2
+        while n.is_even() {
+            n = n / &two;
+        }
+        
+        // STEP 2 | 3..sqrt(n) | Divide i by 
+        let n_sqrt = n.sqrt().to_usize().unwrap();
+
+        for i in 3..n_sqrt {
+            while BigUint::from(i).is_multiple_of(&n) {
+                n = n / BigUint::from(i);
+            }
+        }
+
+        // Step 3
+        if n > two {
+            return Some(n)
+        }
+        else {
+            return None
+        }
+
+
     }
 }
 
@@ -205,6 +250,10 @@ fn rewrite(n: &BigUint) -> (BigUint,BigUint) {
 }
 
 fn is_prime(candidate: &BigUint) -> bool { 
+    if candidate.is_even(){
+        return false;
+    }
+    
     // First, simple trial divide
     if !div_small_primes(candidate){
         return false;
@@ -222,14 +271,19 @@ fn is_prime(candidate: &BigUint) -> bool {
     true
 }
 
+// p = 2q + 1
 fn is_safe_prime(number: &BigUint) -> bool {    
+    // number == q
+    
     let one = BigUint::one();
     let two = &one + &one;
 
     let x = number * two;
-    let y = x + one;
     
-    if is_prime(&y) {
+    // p
+    let p = x + one;
+    
+    if is_prime(&p) {
         return true;
     }
     else {
@@ -237,28 +291,36 @@ fn is_safe_prime(number: &BigUint) -> bool {
     }
 }
 
+fn safe_prime_sieve(number: &BigUint) {
 
-
-
-#[test]
-fn generate(){
-    let x = Generator::new_prime(512);
-    println!("{}",x);
 }
 
-#[test]
-fn generate_safe_prime(){
-    // p = 2q + 1 where p is safe prime
-    let (p,q) = Generator::safe_prime(128);
-    println!("p (safe prime): {}",p);
-    println!("q: {}",q);
+fn vsn(m: &BigUint,n: &BigUint, c: &BigUint){
+    // c: fixed constant
+    
+    // if m's greatest prime factor < log(n)^c
+}
+
+fn Pollard_rho(n: BigUint){
+
 }
 
 
 #[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
+#[test]
+fn generate(){
+    let _x = Generator::new_prime(512);
+}
+
+#[cfg(test)]
+#[test]
+fn generate_safe_prime(){
+    // p = 2q + 1 where p is safe prime
+    let (_p,_q) = Generator::safe_prime(512);
+}
+
+#[test]
+fn prime_factor(){
+    let x = Generator::new_uint(16);
+    let prime_factor = Factorization::prime_factor(x);
 }
