@@ -1,16 +1,75 @@
+//#![no_std]
+
 extern crate num;
 extern crate rand;
 extern crate num_bigint as bigint;
 
 
-use num::{Integer,Float};
-use std::ops::Sub;
+use core::ops::Div;
+use core::ops::Sub;
+use num::Integer;
 use bigint::{BigUint,RandBigInt};
 use num_traits::{Zero, One};
 use num_traits::*;
 
+
+/// # Generator
+/// This is the most commonly used struct. It is used to generate:
+/// - Large Unsigned Integers
+/// - Composite Numbers
+/// - Prime Numbers
+/// - Safe Primes
+/// 
+/// ```
+/// 
+/// use num_primes::{Generator,Verification};
+/// 
+/// fn main(){
+///     let prime = Generator::new_prime(512);
+///     let _uint = Generator::new_uint(1024);
+/// 
+///     // p = 2q + 1 || where p is safe prime
+///     let _safe_prime = Generator::safe_prime(64);
+/// 
+///     let _ver: bool = Verification::is_prime(&prime);
+/// }
+/// ```
 pub struct Generator;
+/// # Prime Verification
+/// This struct is used to verify whether integers are prime, safe prime, or composite.
+/// 
+/// ```
+/// use num_primes::{Generator,Verification};
+/// 
+/// fn main(){
+///     let prime = Generator::new_prime(1024);
+///     let safe = Generator::safe_prime(128);
+/// 
+///     let is_prime: bool = Verification::is_prime(&prime);
+///     let is_safe_prime: bool = Verification::is_safe_prime(&safe);
+/// 
+///     assert_eq!(is_prime, true);
+///     assert_eq!(is_safe_prime, true);
+/// }
+/// ```
 pub struct Verification;
+/// # Prime Factorization
+/// This struct is used to factor large numbers and return their largest prime factor
+/// ```
+/// use num_primes::{Generator,Factorization};
+/// 
+/// fn main() {
+///     // Generates New Unsighed Integer of 64 bits
+///     let uint = Generator::new_uint(64);
+///     // Prime Factorization    
+///     let prime_factor = Factorization::prime_factor(uint);
+/// 
+///     match prime_factor {
+///         Some(x) => println!("Largest Prime Factor: {}",x),
+///         None => println!("No Prime Factors Found"),
+///     }
+/// }
+/// ```
 pub struct Factorization;
 
 impl Generator {
@@ -111,15 +170,36 @@ impl Verification {
     pub fn is_safe_prime(n: &BigUint) -> bool {
         return is_safe_prime(n);
     }
+    /// # Very Smooth Number
+    /// This Function Is Deprecated And Should Rarely Be Used
+    /// ```
+    /// use num_traits::FromPrimitive;
+    /// use num_bigint::BigUint;
+    /// use num_primes::Verification;
+    /// 
+    /// fn main(){
+    ///     // Set BigUint To 7
+    ///     let x: BigUint = BigUint::from_u64(7u64).unwrap();
+    /// 
+    ///     // Verify Its A Smooth Number
+    ///     let result: bool = Verification::is_smooth_number(&x,31.0,5);
+    /// 
+    ///     println!("Is A {} Smooth Number: {}",x,result);
+    /// }
+    /// ```
     #[deprecated]
-    pub fn is_smooth_number(m: &BigUint, n: f64, c: u32) {
-
+    pub fn is_very_smooth_number(m: &BigUint, n: f64, c: u32) -> bool {
+        return vsn(m,n,c);
     }
 }
 
 impl Factorization {
     pub fn prime_factor(mut n: BigUint) -> Option<BigUint> {
-        
+        // Check Primality
+        if is_prime(&n){
+            return Some(n)
+        }
+
         let one = BigUint::one();
         let two = &one + &one;
         
@@ -128,13 +208,14 @@ impl Factorization {
             n = n / &two;
         }
         
-        // STEP 2 | 3..sqrt(n) | Divide i by 
+        // STEP 2 | 3..sqrt(n) | Divide i by n. On failure, add 2 to i
         let n_sqrt = n.sqrt().to_usize().unwrap();
-
-        for i in 3..n_sqrt {
-            while BigUint::from(i).is_multiple_of(&n) {
+        
+        for mut i in 3..n_sqrt {
+            while n.divides(&BigUint::from(i)) {
                 n = n / BigUint::from(i);
             }
+            i = i + 2usize;
         }
 
         // Step 3
@@ -316,7 +397,7 @@ fn vsn(m: &BigUint,n: f64, c: u32) -> bool {
 
     let factor = Factorization::prime_factor(m.clone()).unwrap();
 
-    if factor < BigUint::from_f64(result).unwrap() {
+    if factor <= BigUint::from_f64(result).unwrap() {
         return true
     }
     else if factor > BigUint::from_f64(result).unwrap() {
@@ -327,7 +408,23 @@ fn vsn(m: &BigUint,n: f64, c: u32) -> bool {
     }
 }
 
-fn Pollard_rho(n: BigUint){
+#[deprecated]
+fn pollard_rho(mut n: BigUint) {
+    // Initialize Random Number Generator
+    let mut rng = rand::thread_rng();
+    
+    // Set one and two
+    let zero: BigUint = Zero::zero();
+    let one: BigUint = One::one();
+    let two: BigUint = &one + &one;
+
+    // x
+    let x = &two;
+    let mut y = &zero;
+
+    let mut i: usize = 0usize;
+    let mut counter: usize = 10usize;
+    //let x = rng.gen_biguint_range(&zero,&(&two % (n - two));
 
 }
 
