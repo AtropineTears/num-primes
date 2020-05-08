@@ -71,7 +71,7 @@ impl Generator {
     /// 
     /// fn main(){
     ///     // p = 2q + 1 where p is the safe prime. This generates a number of 64 bits.
-    ///     let (p,q) = Generator::safe_prime(64);
+    ///     let safe_prime = Generator::safe_prime(64);
     /// }
     /// ```
     pub fn safe_prime(n: usize) -> BigUint {
@@ -108,7 +108,11 @@ impl Verification {
             panic!("An Error Has Occured On Checking Composite Number");
         }
     }
-    pub fn is_smooth_number(){
+    pub fn is_safe_prime(n: &BigUint) -> bool {
+        return is_safe_prime(n);
+    }
+    #[deprecated]
+    pub fn is_smooth_number(m: &BigUint, n: f64, c: u32) {
 
     }
 }
@@ -302,10 +306,25 @@ fn is_safe_prime(number: &BigUint) -> bool {
     }
 }
 
-fn vsn(m: &BigUint,n: &BigUint, c: &BigUint){
+// TODO FIX ME
+#[deprecated]
+fn vsn(m: &BigUint,n: f64, c: u32) -> bool {
     // c: fixed constant
-    
+
     // if m's greatest prime factor < log(n)^c
+    let result = n.log10().powi(c as i32).ceil();
+
+    let factor = Factorization::prime_factor(m.clone()).unwrap();
+
+    if factor < BigUint::from_f64(result).unwrap() {
+        return true
+    }
+    else if factor > BigUint::from_f64(result).unwrap() {
+        return false
+    }
+    else {
+        panic!("The Very Smooth Function Is Deprecated And Should Not Be Used")
+    }
 }
 
 fn Pollard_rho(n: BigUint){
@@ -323,11 +342,11 @@ fn generate(){
 #[test]
 fn generate_safe_prime(){
     // p = 2q + 1 where p is safe prime
-    let p = Generator::safe_prime(512);
+    let _p = Generator::safe_prime(512);
 }
 
 #[test]
 fn prime_factor(){
     let x = Generator::new_uint(16);
-    let prime_factor = Factorization::prime_factor(x);
+    let _prime_factor = Factorization::prime_factor(x);
 }
