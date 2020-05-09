@@ -229,7 +229,7 @@ A **Primality Check** is used first to determine whether the number is a prime o
 
 ---
 
-#About
+# About
 
 ## Differences Between `num-primes` and `ramp-primes`
 
