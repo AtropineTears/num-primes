@@ -1,11 +1,11 @@
-//#![no_std]
+#![no_std]
 
 extern crate num;
 extern crate rand;
 extern crate num_bigint as bigint;
 
 
-use core::ops::Div;
+
 use core::ops::Sub;
 use num::Integer;
 use bigint::{BigUint,RandBigInt};

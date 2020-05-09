@@ -1,13 +1,23 @@
 [package]
 name = "num-primes"
 version = "0.1.0"
-authors = ["0xSilene"]
+authors = ["0xSilene, AtropineTears"]
 edition = "2018"
+description = "A Rust Library For Generating Large Prime and Composite Numbers using num with a simplistic interface."
+keywords = ["random","primes","bigint","num","math"]
+categories = ["cryptography", "science","algorithms"]
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+homepage = "https://github.com/0xSilene/num-primes"
+repository = "https://github.com/0xSilene/num-primes"
+
+
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-num = "0.2.1"
+num = { version = "0.2.1", default-features = false }
 num-traits = "0.2.11"
 rand = "0.5"
 num-bigint = { version = "0.2", features = ["rand"] }

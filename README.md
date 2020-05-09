@@ -1,8 +1,29 @@
 # Num-Primes: CSPRNG Large Composite, Prime, Safe Prime Generator
 
-A **Rust Library** for generating **Large Composite, Prime, Safe Prime, and Unsigned Integers** with **simplistic, beautiful API** as well as extra functionality.
+This crate provides a **beautifully simplistic API** for generating large, cryptographically-random, unsigned integers in rust, including but not limited to **composite, prime, and safe prime numbers**.
 
-* Go to [About](#about)
+It takes full advantage of the [num](https://crates.io/crates/num) crate on **stable rust**.
+
+* Read the [About](#about)
+* Read the [License](#license)
+* Read the [Contribution](#contribution)
+
+## Usage
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+num-primes = "0.1.1"
+```
+
+Optionally, you may want to add the following:
+
+```toml
+num = { version = "0.2.1", default-features = false }
+```
+
+
 
 ## How To Use
 
@@ -231,6 +252,59 @@ A **Primality Check** is used first to determine whether the number is a prime o
 
 # About
 
+## Prime Number Generation Design
+
+The Prime Number Generation and parts of its code is based on [Snips-AI's Medium Blog on Generating Prime Numbers](https://medium.com/snips-ai/prime-number-generation-2a02f28508ff).
+
+A **conservative attempt** is made at deciding whether a number is prime or not. The number goes through the generation phase and 3 tests to determine if its prime:
+
+### Generation Phase
+
+1. A single parameter is passed to the generator function that indicates the number of bits the prime should be.
+
+2. The userspace CSPRNG is seeded by the operating system to generate the random numbers using the rand crate.
+
+3. An unsigned integer is generated until it passes the prime test.
+
+4. The number is sent to be processed by **four tests**
+
+### Primality Tests
+
+The numbers go through multiple tests to determine whether they are composite or prime.
+
+1. A check is done to see if the number is even.
+2. An array of the first **2048 primes** is used to check whether the number is divisble by any of the primes in the array.
+3. **Fermat's Little Theorem** is performed
+4. **Miller-Rabin Primality Test**, the gold standard recommended by the official RSA documentation and by [NIST](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf) on generating primes, is performed with **16 iterations**, the same used by Apple's cryptosystem.
+
+If the number passes these tests, it is considered with high probability to be prime. Feel free to verify them yourselves on [Wolfram Alpha](https://www.wolframalpha.com/) by simply typing in the prime number.
+
+### Safe Primes
+
+**Safe Primes** are generated simply by checking if `(p-1)/2` is a prime with the tests listed above.
+
+## OpenSSL-Prime vs. Num-Primes
+
+**OpenSSL LTS (1.1.1)** has a [doc page](https://www.openssl.org/docs/man1.1.1/man1/openssl-prime.html) for **prime generation**, including how safe primes are generated. 
+
+> OpenSSL should be prefered for serious cryptographic implementations due to the security of their code and their code having been audited.
+
+Num-Primes may be useful in certain situations, like in embedded systems or where OpenSSLis overkill.
+
+---
+
+**OpenSSL-prime:**
+
+* Generates **Safe Primes** using `(n-1)/2` but is much more efficient
+* Performs a **default** of **20 checks** on prime numbers.
+
+**Num-Primes:**
+
+* Generates **Safe Primes** using `(n-1)/2` but takes much longer for unknown reasons
+* Performs a **default** of **16 checks** on prime numbers through 4 different primality tests
+* Supports #[no_std] and stable rust
+* May be useful in situations where using OpenSSL would be overkill.
+
 ## Differences Between `num-primes` and `ramp-primes`
 
 [ramp-primes](https://github.com/0xSilene/ramp-primes) is the **original implementation** of the prime number generator using the **ramp** library.
@@ -271,3 +345,17 @@ Uses [ramp](https://crates.io/crates/ramp), a **high-performance multiple-precis
 * Generally **Faster** For Generation
 * Less Features
 * Only Works On **Unstable Rust** (Nightly Build)
+
+# License
+
+Licensed under either of
+
+* Apache License, Version 2.0
+
+* MIT license
+
+at your option.
+
+# Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
