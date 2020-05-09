@@ -7,11 +7,12 @@ description = "A Rust Library For Generating Large Prime and Composite Numbers u
 keywords = ["random","primes","bigint","num","math"]
 categories = ["cryptography", "science","algorithms"]
 readme = "README.md"
-license = "MIT OR Apache-2.0"
+license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/0xSilene/num-primes"
 repository = "https://github.com/0xSilene/num-primes"
 
-
+[badges]
+travis-ci = { repository = "0xSilene/num-primes", branch = "master" }
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
