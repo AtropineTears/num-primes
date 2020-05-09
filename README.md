@@ -1,12 +1,8 @@
-# Num-Primes
+# Num-Primes: CSPRNG Large Composite, Prime, Safe Prime Generator
 
-This rust library is dependent on the [num](https://crates.io/crates/num) crate. It allows for the generation and verification of:
+A **Rust Library** for generating **Large Composite, Prime, Safe Prime, and Unsigned Integers** with **simplistic, beautiful API** as well as extra functionality.
 
-- Large Unsigned Integers
-- Large Prime Numbers
-- Large Safe Prime Numbers
-
-It also includes factorization functions.
+* Go to [About](#about)
 
 ## How To Use
 
@@ -14,48 +10,67 @@ There are three main structs that are included in this library
 
 | Structs       | Description                                                  |
 | ------------- | ------------------------------------------------------------ |
-| Generator     | Allows the **random generation** of large unsigned integers**, **prime numbers, and safe prime numbers |
-| Verification  | Allows the **verification** of large composite, prime, safe prime, and very smooth numbers. |
-| Factorization | Allows the **factorization** of Composite Numbers into their largest prime factor. |
+| Generator     | Allows the **random generation** of composite numbers, prime numbers, and safe prime numbers. |
+| Verification  | Allows the **verification** of composite, prime, safe prime, and very smooth numbers. |
+| Factorization | Allows the **factorization** of Composite and Prime Numbers into their largest Prime Factor. |
 
 ## Generator
 
-### Generate Large Unsigned Integer
+### Generate Composite Number
 
-This function will generate a **large unsigned integer** of n-bits.
+This function will generate a **composite number** of `n-bits`.
 
 ```rust
 use num_primes::Generator;
 
 fn main(){
-  let x = Generator::new_uint(1024);
+  // Generate Composite of 1024 bits
+  let composite = Generator::new_composite(1024);
 }
 ```
 
 ### Generate Prime Number
 
-This function will generate a **prime number** of the size n-bits.
+This function will generate a **prime number** of `n-bits`.
 
 ```rust
 use num_primes::Generator;
 
 fn main(){
+  // Generate two primes (p,q) of 512 bits each
   let p = Generator::new_prime(512);
   let q = Generator::new_prime(512);
   
+  // Multiply to get the modulus (n)
   let n = p * q;
 }
 ```
 
 ### Generate Safe Prime
 
-This function will generate a **safe prime number** of the size n-bits. This function uses the [same tests openssl uses](https://www.openssl.org/docs/man1.1.1/man1/openssl-prime.html) to generate safe primes, which is `(n-1)/2`. This function is quite time consuming and should be avoided for large sizes.
+This function will generate a **safe prime number** of `n-bits`. This function uses the [same tests openssl uses](https://www.openssl.org/docs/man1.1.1/man1/openssl-prime.html) to generate safe primes, which is `(n-1)/2`.
+
+This function is quite time consuming and should be avoided for large sizes.
 
 ```rust
 use num_primes::Generator;
 
 fn main(){
+  // Generate Safe Prime of 64 bits | Uses (n-1)/2 to check
   let safe_prime = Generator::safe_prime(64);
+}
+```
+
+### Generate Large Unsigned Integer
+
+This function will generate a **large unsigned integer** of `n-bits`. This function is **faster** than generating a composite or prime number due to no checks being done.
+
+```rust
+use num_primes::Generator;
+
+fn main(){
+  // Generate a Large Unsigned Integer of 1024 bits without running any checks
+  let x = Generator::new_uint(1024);
 }
 ```
 
@@ -69,10 +84,14 @@ This function will verify whether a `BigUint` type is a **composite** by returni
 use num_primes::{Generator,Verification};
 
 fn main(){
-  let x = Generator::new_uint(1024);
+  // Generates Composite Number of 1024 bits
+  let x = Generator::new_composite(1024);
   
-  // Check whether the unsigned integer is a composite or not which can still be prime
+  // Check if the number is a Composite Number
   let is_composite: bool = Verification::is_composite(&x);
+  
+  // Asserts that 'is_composite' is true
+  assert_eq!(is_composite, true);
 }
 ```
 
@@ -84,10 +103,13 @@ This function will verify whether a `BigUint` type is a **prime** by returning a
 use num_primes::{Generator,Verification};
 
 fn main(){
+  // Generates Prime Number of 1024 bits
   let x = Generator::new_prime(1024);
   
+  // Check if the number is a Prime Number
   let is_prime: bool = Verification::is_prime(&x);
   
+  // Asserts that 'is_prime' is true
   assert_eq!(is_prime, true);
 }
 ```
@@ -100,10 +122,13 @@ This function will verify whether a `BigUint` type is a **safe prime** by return
 use num_primes::{Generator,Verification};
 
 fn main(){
+  // Generates a Safe Prime Number of 128 bits
   let x = Generator::safe_prime(128);
   
+  // Check if the number is a Safe Prime Number
   let is_safe_prime: bool = Verification::is_safe_prime(&x);
   
+  // Asserts that `is_safe_prime` is true
   assert_eq!(is_safe_prime, true);
 }
 ```
@@ -165,20 +190,21 @@ Read [GeeksforGeeks - Efficient program to print all prime factors of a given nu
 
 ---
 
-This function lets you factorize composite numbers and find their **Greatest Prime Factor**.
+This function lets you **factorize** composite numbers and prime numbers to find their **Greatest Prime Factor**.
 
 ```rust
 use num_primes::{Generator,Factorization};
 
 fn main() {
-    // Generates New Unsighed Integer of 64 bits
-    let uint = Generator::new_uint(64);
+    // Generates New Unsighed Integer of 32 bits
+    let uint = Generator::new_uint(32);
     
   	// Prime Factorization Returns Option<BigUint>    
-    let prime_factor = Factorization::prime_factor(uint);
+    let factor = Factorization::prime_factor(uint);
 
-    match prime_factor {
-        Some(x) => println!("Largest Prime Factor: {}",x),
+  	// match the Option<BigUint>
+    match factor {
+        Some(factor) => println!("Largest Prime Factor: {}",factor),
         None => println!("No Prime Factors Found"),
     }
 }
@@ -200,3 +226,48 @@ A **Primality Check** is used first to determine whether the number is a prime o
       1. increment `i` by 2 and continue
 4. If `n` is a prime number and `n` > `2`
    1. Return `n`
+
+---
+
+#About
+
+## Differences Between `num-primes` and `ramp-primes`
+
+[ramp-primes](https://github.com/0xSilene/ramp-primes) is the **original implementation** of the prime number generator using the **ramp** library.
+
+[num-primes](https://github.com/0xSilene/num-primes) is the **improved implementation** using the **num** library and is available on **stable release** with **no_std** support.
+
+### num-primes (Stable)
+
+Uses [num](https://crates.io/crates/num), a **pure-rust implementation** for **numeric types and traits**.
+
+* **num** is **stable** and can work on the **Default, Beta, and Nightly Branch**
+
+* **num** is in **Pure Rust**
+* **num** implements more **features**
+* **num** has around **~6,000,000 downloads**
+* **num** is more developed than **ramp**.
+
+**num-primes** has:
+
+* **Better API** and **Documentation**
+* More **Functionality**
+* **no_std support**
+
+### ramp-primes (Unstable)
+
+Uses [ramp](https://crates.io/crates/ramp), a **high-performance multiple-precision** (aka "BigNum") library for working with numbers bigger than can normally be handled.
+
+* **ramp** only works on **unstable rust** (the nightly branch).
+* **ramp** is written in **Rust** and **Inline Assembly** (security concern)
+* **ramp** is generally **faster**
+* **ramp** is specifically focused on **multiple-precision arithmetic**
+* **ramp** has around **~17,000 downloads**
+* **ramp** is not as developed as **num**
+
+**ramp-primes** is:
+
+* The First Implementation
+* Generally **Faster** For Generation
+* Less Features
+* Only Works On **Unstable Rust** (Nightly Build)

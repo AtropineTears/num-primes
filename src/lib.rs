@@ -73,6 +73,31 @@ pub struct Verification;
 pub struct Factorization;
 
 impl Generator {
+    /// # Generate Large Composite Numbers
+    /// This function guarantees the returned value is a composite number and is not prime.
+    /// ```
+    /// use num_primes::Generator;
+    /// 
+    /// fn main(){
+    ///     // Generate Composite Number of 1024 bits
+    ///     let composite = Generator::new_composite(1024);
+    /// 
+    ///     // Print Out Composite Number
+    ///     println!("Composite Number: {}",composite);
+    /// }
+    /// ```
+    pub fn new_composite(n: usize) -> BigUint {
+        let mut rng = rand::thread_rng();
+        loop {
+            // Make mutable and set LSB and MSB
+            let candidate: BigUint = rng.gen_biguint(n);
+            //candidate.set_bit(0, true);
+            //candidate.set_bit((n-1) as u32, true);
+            if is_prime(&candidate) == false { 
+                return candidate;
+            }
+        }
+    }
     /// # Generate Large Unsigned Integer
     /// This function takes an input (n) for the number of bits the unsigned    integer should be
     /// 
@@ -194,9 +219,29 @@ impl Verification {
 }
 
 impl Factorization {
+    /// # Prime Factorization
+    /// This is a method of factoring the largest prime factors of large numbers. It is slow and should not be relied on. It can easily factor 32-bit numbers and sometimes 64-bit.
+    /// 
+    /// It returns as a `Option<BigUint>` type
+    /// 
+    /// ```
+    /// use num_primes::{Generator,Factorization};
+    /// 
+    /// fn main() {
+    ///     // Generates New Unsighed Integer of 32 bits
+    ///     let uint = Generator::new_uint(32);
+    ///     // Prime Factorization    
+    ///     let factor = Factorization::prime_factor(uint);
+    /// 
+    ///     match factor {
+    ///         Some(factor) => println!("Largest Prime Factor: {}",factor),
+    ///         None => println!("No Prime Factors Found"),
+    ///     }
+    /// }
+    /// ```
     pub fn prime_factor(mut n: BigUint) -> Option<BigUint> {
-        // Check Primality
-        if is_prime(&n){
+        // Check Primality and if prime, returns prime
+        if is_prime(&n) {
             return Some(n)
         }
 
