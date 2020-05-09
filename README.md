@@ -1,5 +1,7 @@
 # Num-Primes: CSPRNG Large Composite, Prime, Safe Prime Generator
 
+[![Crates.io](https://img.shields.io/crates/v/num-primes?style=flat-square)](https://crates.io/crates/num-primes)[![Build Status](https://travis-ci.org/0xSilene/num-primes.svg?branch=master)](https://travis-ci.org/0xSilene/num-primes)
+
 This crate provides a **beautifully simplistic API** for generating large, cryptographically-random, unsigned integers in rust, including but not limited to **composite, prime, and safe prime numbers**.
 
 It takes full advantage of the [num](https://crates.io/crates/num) crate on **stable rust**.
@@ -15,12 +17,6 @@ Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
 num-primes = "0.1.1"
-```
-
-Optionally, you may want to add the following:
-
-```toml
-num = { version = "0.2.1", default-features = false }
 ```
 
 
