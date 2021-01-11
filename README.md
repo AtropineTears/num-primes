@@ -17,7 +17,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-num-primes = "0.1.1"
+num-primes = "0.1.2"
 ```
 
 
