@@ -1,18 +1,18 @@
 [package]
 name = "num-primes"
-version = "0.1.1"
-authors = ["0xSilene, AtropineTears"]
+version = "0.1.2"
+authors = ["0xAtropine"]
 edition = "2018"
 description = "A Rust Library For Generating Large Prime and Composite Numbers using num with a simplistic interface."
 keywords = ["random","primes","bigint","num","math"]
 categories = ["cryptography", "science","algorithms"]
 readme = "README.md"
 license = "Apache-2.0 OR MIT"
-homepage = "https://github.com/0xSilene/num-primes"
-repository = "https://github.com/0xSilene/num-primes"
+homepage = "https://github.com/0xAtropine/num-primes"
+repository = "https://github.com/0xAtropine/num-primes"
 
 [badges]
-travis-ci = { repository = "0xSilene/num-primes", branch = "master" }
+travis-ci = { repository = "0xAtropine/num-primes", branch = "master" }
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
