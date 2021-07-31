@@ -484,7 +484,7 @@ fn generate(){
 #[test]
 fn generate_safe_prime(){
     // p = 2q + 1 where p is safe prime
-    let _p = Generator::safe_prime(512);
+    let _p = Generator::safe_prime(64);
 }
 
 #[test]

@@ -1,7 +1,7 @@
 [package]
 name = "num-primes"
 version = "0.1.2"
-authors = ["0xAtropine"]
+authors = ["AtropineTearz"]
 edition = "2018"
 description = "A Rust Library For Generating Large Prime and Composite Numbers using num with a simplistic interface."
 keywords = ["random","primes","bigint","num","math"]

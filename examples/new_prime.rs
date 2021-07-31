@@ -7,7 +7,4 @@ fn main(){
 
     // Multiply p and q and return n
     let n = p * q;
-
-    // Print n
-    println!("n: {}",n);
 }
