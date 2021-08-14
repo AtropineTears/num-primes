@@ -282,6 +282,8 @@ If the number passes these tests, it is considered with high probability to be p
 
 ## OpenSSL-Prime vs. Num-Primes
 
+> https://security.stackexchange.com/questions/176394/how-does-openssl-generate-a-big-prime-number-so-fast
+
 **OpenSSL LTS (1.1.1)** has a [doc page](https://www.openssl.org/docs/man1.1.1/man1/openssl-prime.html) for **prime generation**, including how safe primes are generated. 
 
 > OpenSSL should be prefered for serious cryptographic implementations due to the security of their code and their code having been audited.
