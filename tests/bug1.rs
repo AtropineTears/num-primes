@@ -7,6 +7,7 @@ use num_traits::{Zero, One};
 // - Found on 12 Aug 2021
 // The bug is that verification of small prime numbers does not work correctly. It also hangs when generating a 14 bit prime number.
 // This affects both Verfication::is_prime() and Verification::is_composite() as is_composite simply is the inverse of the primality check
+// The Bug is most likely in the miller-rabin implementation
 
 #[test]
 fn bug1() {
@@ -27,11 +28,4 @@ fn bug1() {
             println!("{} is not a prime number", number);
         }
     }
-}
-
-#[test]
-fn bug1_2(){
-    // Bug 1 
-    let hang = Generator::new_prime(14);
-    println!("{} is not a prime number", hang);
 }

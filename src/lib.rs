@@ -12,6 +12,10 @@ use bigint::{BigUint,RandBigInt};
 use num_traits::{Zero, One};
 use num_traits::*;
 
+// Settings
+// NIST recomends 5 rounds for miller rabin. This implementation does 8. Three iterations has a probability of 2^80 of failing
+const MILLER_RABIN_ROUNDS: usize = 8usize;
+
 
 /// # Generator
 /// This is the most commonly used struct. It is used to generate:
@@ -307,13 +311,9 @@ fn fermat(candidate: &BigUint) -> bool {
 }
 
 fn miller_rabin(candidate: &BigUint, limit: usize) -> bool {
-    //println!("Miller Attempt");
     // One and Two in ramp::Int form
     let one = BigUint::one();
     let two = &one + &one;
-    
-    //let n_minus: Int = candidate - one;
-    //let n_minus_2: Int = n_minus - one;
     
     let (d,s) = rewrite(&candidate);
 
@@ -398,7 +398,7 @@ fn is_prime(candidate: &BigUint) -> bool {
     }
 
     // Finally, Miller-Rabin test
-    if !miller_rabin(candidate, 16) {
+    if !miller_rabin(candidate, MILLER_RABIN_ROUNDS) {
         return false;
     }
     true
