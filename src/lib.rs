@@ -1,4 +1,4 @@
-#[allow(deprecated)]
+#![no_std]
 
 extern crate num;
 extern crate rand;
@@ -319,7 +319,6 @@ fn miller_rabin(candidate: &BigUint, limit: usize) -> bool {
     let mut rng = rand::thread_rng();
 
     for _i in 0..limit {
-        println!("i: {}",_i);
         // Exclusive End Range
         let a = rng.gen_biguint_range(&two, &(candidate-&one));
         
