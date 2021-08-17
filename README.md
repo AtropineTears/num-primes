@@ -17,7 +17,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-num-primes = "0.1.2"
+num-primes = "0.1.3"
 ```
 
 
@@ -93,6 +93,8 @@ fn main(){
 ```
 
 ## Verification
+
+WARNING: There is currently a bug that makes verification of certain prime numbers fail. Be careful when using this feature.
 
 ### Verify Composite Number
 

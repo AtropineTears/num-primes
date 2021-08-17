@@ -8,17 +8,19 @@ keywords = ["random","primes","bigint","num","math"]
 categories = ["cryptography", "science","algorithms"]
 readme = "README.md"
 license = "Apache-2.0 OR MIT"
-homepage = "https://github.com/0xAtropine/num-primes"
-repository = "https://github.com/0xAtropine/num-primes"
+homepage = "https://github.com/AtropineTearz/num-primes"
+repository = "https://github.com/AtropineTearz/num-primes"
 
 [badges]
-travis-ci = { repository = "0xAtropine/num-primes", branch = "master" }
+travis-ci = { repository = "AtropineTearz/num-primes", branch = "master" }
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-num = { version = "0.2.1", default-features = false }
+# num
+num = { version = "0.4.0", default-features = false }
 num-traits = "0.2.11"
-rand = "0.5"
-num-bigint = { version = "0.2", features = ["rand"] }
+num-bigint = { version = "0.2.6", features = ["rand"] }
+# random
+rand = "0.5.6"

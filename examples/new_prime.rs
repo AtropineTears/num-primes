@@ -6,5 +6,5 @@ fn main(){
     let q = Generator::new_prime(512);
 
     // Multiply p and q and return n
-    let n = p * q;
+    let _n = p * q;
 }

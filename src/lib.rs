@@ -1,4 +1,4 @@
-#![no_std]
+#[allow(deprecated)]
 
 extern crate num;
 extern crate rand;
@@ -13,7 +13,7 @@ use num_traits::{Zero, One};
 use num_traits::*;
 
 // Settings
-// NIST recomends 5 rounds for miller rabin. This implementation does 8. Three iterations has a probability of 2^80 of failing
+// NIST recomends 5 rounds for miller rabin. This implementation does 8. Apple uses 16. Three iterations has a probability of 2^80 of failing
 const MILLER_RABIN_ROUNDS: usize = 8usize;
 
 
@@ -216,7 +216,6 @@ impl Verification {
     ///     println!("Is A {} Smooth Number: {}",x,result);
     /// }
     /// ```
-    #[deprecated]
     pub fn is_very_smooth_number(m: &BigUint, n: f64, c: u32) -> bool {
         return vsn(m,n,c);
     }
@@ -320,11 +319,13 @@ fn miller_rabin(candidate: &BigUint, limit: usize) -> bool {
     let mut rng = rand::thread_rng();
 
     for _i in 0..limit {
-        //println!("i: {}",i);
+        println!("i: {}",_i);
         // Exclusive End Range
         let a = rng.gen_biguint_range(&two, &(candidate-&one));
+        
         //println!("a: {}",a);
         //println!("d: {}",d.clone());
+        
         //let basis = Int::sample_range(&two, &(candidate-&two));
         
         let mut x = a.modpow(&d, &candidate);
@@ -380,8 +381,7 @@ fn rewrite(n: &BigUint) -> (BigUint,BigUint) {
     return (d.clone(),i)
 }
 
-// if true, is prime
-// if false, is not prime
+
 fn is_prime(candidate: &BigUint) -> bool { 
     if candidate.is_even(){
         return false;
@@ -441,7 +441,6 @@ fn is_safe_prime(number: &BigUint) -> bool {
 }
 
 // TODO FIX ME
-#[deprecated]
 fn vsn(m: &BigUint,n: f64, c: u32) -> bool {
     // c: fixed constant
 
@@ -461,7 +460,6 @@ fn vsn(m: &BigUint,n: f64, c: u32) -> bool {
     }
 }
 
-#[deprecated]
 fn pollard_rho(mut n: BigUint) {
     // Initialize Random Number Generator
     let mut rng = rand::thread_rng();
