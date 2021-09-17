@@ -1,4 +1,6 @@
+use num_bigint::BigUint;
 use num_primes::*;
+use num::*;
 
 
 // ===Issue #1===
@@ -9,21 +11,26 @@ use num_primes::*;
 
 #[test]
 fn bug1() {
+    
+
     let numbers = [
-        Generator::new_prime(512),
+        Generator::new_prime(8),
         Generator::new_prime(32),
         Generator::new_prime(16),
         // Two prime numbers
-        17957u32.into(),
-        5u32.into(),
+        17957u32.into(), // Prime
+        5u32.into(), // Prime
+        2usize.into(), // Prime
+        num_bigint::ToBigUint::to_biguint(&5).unwrap(), // Prime
+        num_bigint::ToBigUint::to_biguint(&37463).unwrap() // Prime
     ];
 
     for number in numbers {
         if Verification::is_prime(&number) {
-            println!("{} is a prime number", number);
+            println!("[Prime] {}", number);
         }
         else {
-            println!("{} is not a prime number", number);
+            println!("[Composite] {}", number);
         }
     }
 }

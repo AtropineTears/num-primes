@@ -17,10 +17,12 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-num-primes = "0.1.3"
+num-primes = "0.2.0"
 ```
 
+## Warning
 
+There is currently a major bug in `is_prime()` and `is_composite()` that makes some values return wrong. For example, a prime can sometimes be marked as composite unless it was generated as they use the same tests to test for primality.
 
 ## How To Use
 
