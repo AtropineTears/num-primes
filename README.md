@@ -11,6 +11,10 @@ It takes full advantage of the [num](https://crates.io/crates/num) crate on **st
 * Read the [License](#license)
 * Read the [Contribution](#contribution)
 
+## Notice
+
+Please note there is a critical bug in this program that I cannot seem to fix where it marks some prime numbers as not prime. It is in the miller-rabin implementation and I cannot seem to fix it. If anyone is up to it, feel free to look through the issues tab for information about the bug and submit a PR if you find a fix.
+
 ## Usage
 
 Add this to your `Cargo.toml`:
