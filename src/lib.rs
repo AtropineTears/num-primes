@@ -8,7 +8,7 @@ extern crate num_bigint as bigint;
 
 use core::ops::Sub;
 use num::Integer;
-use bigint::{BigUint,RandBigInt};
+pub use bigint::{BigUint,RandBigInt};
 use num_traits::{Zero, One};
 use num_traits::*;
 
