@@ -342,6 +342,7 @@ fn miller_rabin(candidate: &BigUint, limit: usize) -> bool {
     */
     
     let (d,s) = rewrite(&candidate);
+    let step = s.sub(&one).to_usize().unwrap();
 
     let mut rng = rand::thread_rng();
 
@@ -366,10 +367,10 @@ fn miller_rabin(candidate: &BigUint, limit: usize) -> bool {
         else {
             // Convert To Usizes For Loop
             // step = (s - 1)
-            let step = s.sub(&one).to_usize().unwrap();
             let one_usize = one.to_usize().unwrap();
             let zero_usize = zero.to_usize().unwrap();
             
+            let mut break_early = false;
             // Issue #1 | Changed one_usize to zero_usize; step (s-1) was equal to iterations-1 and therefore needed an extra iteration
             for _ in zero_usize..step {
                 x = x.modpow(&two,candidate);
@@ -381,11 +382,15 @@ fn miller_rabin(candidate: &BigUint, limit: usize) -> bool {
                     return false
                 } 
                 else if x == (candidate - BigUint::one()) {
+                    break_early = true;
                     break;
                 }
                 
             }
-            return false
+
+            if !break_early {
+                return false
+            }
         }
     }
     return true
