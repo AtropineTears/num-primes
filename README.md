@@ -11,10 +11,6 @@ It takes full advantage of the [num](https://crates.io/crates/num) crate on **st
 * Read the [License](#license)
 * Read the [Contribution](#contribution)
 
-## Notice
-
-Please note there is a critical bug in this program that I cannot seem to fix where it marks some prime numbers as not prime. It is in the miller-rabin implementation and I cannot seem to fix it. If anyone is up to it, feel free to look through the issues tab for information about the bug and submit a PR if you find a fix.
-
 ## Usage
 
 Add this to your `Cargo.toml`:
@@ -23,10 +19,6 @@ Add this to your `Cargo.toml`:
 [dependencies]
 num-primes = "0.2.0"
 ```
-
-## Warning
-
-There is currently a major bug in `is_prime()` and `is_composite()` that makes some values return wrong. For example, a prime can sometimes be marked as composite unless it was generated as they use the same tests to test for primality.
 
 ## How To Use
 
@@ -97,10 +89,6 @@ fn main(){
   let x = Generator::new_uint(1024);
 }
 ```
-
-## Verification
-
-WARNING: There is currently a bug that makes verification of certain prime numbers fail. Be careful when using this feature.
 
 ### Verify Composite Number
 
