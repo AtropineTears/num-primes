@@ -8,8 +8,10 @@ extern crate num_bigint as bigint;
 
 
 use core::ops::Sub;
+use core::convert::TryInto;
+use num::integer::gcd;
 use num::Integer;
-pub use bigint::{BigUint,RandBigInt};
+pub use bigint::{BigUint, BigInt, RandBigInt};
 use num_traits::{Zero, One};
 use num_traits::*;
 
@@ -19,7 +21,7 @@ use log::info;
 
 // Settings
 // NIST recomends 5 rounds for miller rabin. This implementation does 8. Apple uses 16. Three iterations has a probability of 2^80 of failing
-const MILLER_RABIN_ROUNDS: usize = 8usize;
+const MILLER_RABIN_ROUNDS: usize = 64usize;
 
 
 /// # Generator
@@ -97,11 +99,13 @@ impl Generator {
     /// ```
     pub fn new_composite(n: usize) -> BigUint {
         let mut rng = rand::thread_rng();
+        let n = n.try_into().unwrap();
+
         loop {
             // Make mutable and set LSB and MSB
-            let candidate: BigUint = rng.gen_biguint(n);
-            //candidate.set_bit(0, true);
-            //candidate.set_bit((n-1) as u32, true);
+            let mut candidate: BigUint = rng.gen_biguint(n);
+            candidate.set_bit(0, true);
+            candidate.set_bit((n-1) as u64, true);
             if is_prime(&candidate) == false { 
                 return candidate;
             }
@@ -123,7 +127,7 @@ impl Generator {
     /// ```
     pub fn new_uint(n: usize) -> BigUint {
         let mut rng = rand::thread_rng();
-        return rng.gen_biguint(n);
+        return rng.gen_biguint(n.try_into().unwrap());
     }
 
     /// # Generate Prime Number
@@ -146,13 +150,14 @@ impl Generator {
     /// ```
     pub fn new_prime(n: usize) -> BigUint {
         let mut rng = rand::thread_rng();
-        
+        let n = n.try_into().unwrap();
+
         loop {
             // Make mutable and set LSB and MSB
-            let candidate: BigUint = rng.gen_biguint(n);
-            
-            //candidate.set_bit(0, true);
-            //candidate.set_bit((n-1) as u32, true);
+            let mut candidate: BigUint = rng.gen_biguint(n);
+             
+            candidate.set_bit(0, true);
+            candidate.set_bit((n-1) as u64, true);
             
             if is_prime(&candidate) == true { 
                 return candidate;
@@ -172,11 +177,15 @@ impl Generator {
     /// ```
     pub fn safe_prime(n: usize) -> BigUint {
         let mut rng = rand::thread_rng();
+        let n = n.try_into().unwrap();
+
         loop {
             // Make mutable and set LSB and MSB
-            let candidate: BigUint = rng.gen_biguint(n);
-            //candidate.set_bit(0, true);
-            //candidate.set_bit((n-1) as u32, true);
+            let mut candidate: BigUint = rng.gen_biguint(n);
+            
+            candidate.set_bit(0, true);
+            candidate.set_bit((n-1) as u64, true);
+
             if is_prime(&candidate) == true {
                 if is_safe_prime(&candidate) == true {
                     // checks with (p-1/n)
@@ -219,7 +228,7 @@ impl Verification {
     ///     let x: BigUint = BigUint::from_u64(7u64).unwrap();
     /// 
     ///     // Verify Its A Smooth Number
-    ///     let result: bool = Verification::is_smooth_number(&x,31.0,5);
+    ///     let result: bool = Verification::is_very_smooth_number(&x,31.0,5);
     /// 
     ///     println!("Is A {} Smooth Number: {}",x,result);
     /// }
@@ -255,33 +264,31 @@ impl Factorization {
         if is_prime(&n) {
             return Some(n)
         }
+            
+        let one = BigInt::one();
+        let two: BigInt = &one + &one;
 
-        let one = BigUint::one();
-        let two = &one + &one;
-        
-        // STEP 1 | n divided by 2
-        while n.is_even() {
-            n = n / &two;
-        }
-        
-        // STEP 2 | 3..sqrt(n) | Divide i by n. On failure, add 2 to i
-        let n_sqrt = n.sqrt().to_usize().unwrap();
-        
-        for mut i in 3..n_sqrt {
-            while n.divides(&BigUint::from(i)) {
-                n = n / BigUint::from(i);
-            }
-            i = i + 2usize;
+        let mut x = two.clone();
+        let mut y = two.clone();
+        let mut d = one.clone();
+        let n_int = n.clone().try_into().unwrap();
+
+        let g = |x: &BigInt| x.modpow(&two, &n_int);
+
+        while d == one {
+            x = g(&x);
+            y = g(&g(&y));
+            d = gcd((&x - &y).abs(), &n_int - 0);
         }
 
-        // Step 3
-        if n > two {
-            return Some(n)
+        let d = d.try_into().unwrap();
+
+        if d == n {
+            None
         }
         else {
-            return None
+            Some(d)
         }
-
 
     }
 }
@@ -318,7 +325,6 @@ fn fermat(candidate: &BigUint) -> bool {
     
     let result = random.modpow(&(exponent), candidate);
 
-    //let result = random.pow_mod(&(candidate - One::one()), candidate);
     result == One::one()
 }
 
@@ -327,61 +333,41 @@ fn miller_rabin(candidate: &BigUint, limit: usize) -> bool {
     let zero: BigUint = Zero::zero();
     let one = BigUint::one();
     let two: BigUint = &one + &one;
-    let two_2 = num_bigint::ToBigUint::to_biguint(&2).unwrap();
 
     // Check Whether Candidate Is 2 (which is prime)
-    if candidate == &two_2 {
+    if candidate == &two {
         return true
     }
-
-    // Check Whether Candidate Is Even
-    /*
-    if candidate.mod(two) {
-        return false
-    }
-    */
     
     let (d,s) = rewrite(&candidate);
     let step = s.sub(&one).to_usize().unwrap();
+    let one_usize = one.to_usize().unwrap();
+    let zero_usize = zero.to_usize().unwrap();
+    let c_minus_1 = candidate-&one;
 
     let mut rng = rand::thread_rng();
 
     for _i in 0..limit {
         // Generate Random Number between [2,n-1) | Exclusive End Range; Uses (n-1), not (n-2)
-        let a = rng.gen_biguint_range(&two, &(candidate-&one));
-        
-        // Reference Implementation
-        // Pretty sure `sample_range()` has an inclusive end
-        //let basis = Int::sample_range(&two, &(candidate-&two));
+        let a = rng.gen_biguint_range(&two, &c_minus_1);
         
         // (a^d mod n)
         let mut x = a.modpow(&d, &candidate);
 
-        // Reference Implementation
-        //let mut y = Int::modpow(&basis, &d, candidate);
-
-        if x == one || x == (candidate - &one) {
+        if x == one || x == c_minus_1 {
             continue
             // return true
         }
         else {
-            // Convert To Usizes For Loop
-            // step = (s - 1)
-            let one_usize = one.to_usize().unwrap();
-            let zero_usize = zero.to_usize().unwrap();
-            
             let mut break_early = false;
             // Issue #1 | Changed one_usize to zero_usize; step (s-1) was equal to iterations-1 and therefore needed an extra iteration
             for _ in zero_usize..step {
                 x = x.modpow(&two,candidate);
 
-                // Reference Implementation
-                //y = Int::modpow(&y, &two, candidate);
-                
                 if x == one {
                     return false
                 } 
-                else if x == (candidate - BigUint::one()) {
+                else if x == c_minus_1 {
                     break_early = true;
                     break;
                 }
@@ -450,7 +436,6 @@ fn is_prime(candidate: &BigUint) -> bool {
     else {
         return true
     }
-    return true
 }
 
 // p = 2q + 1
