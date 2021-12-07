@@ -260,7 +260,8 @@ impl Factorization {
         if is_prime(&n) {
             return Some(n)
         }
-        
+
+        let org = n.clone().try_into().unwrap();
         let mut n: BigInt = n.try_into().unwrap();
 
         let mut f = BigInt::zero();
@@ -271,6 +272,7 @@ impl Factorization {
         // This while loop will run until n is completely factorized,
         // thus giving the largest factor. If you only care about A factor,
         // this can be rewritten as below for much better performance.
+        
         while n > one {
         // while f == BigInt::zero() {
 
@@ -288,6 +290,10 @@ impl Factorization {
                 d = gcd((&x - &y).abs(), &n_int - 0);
             }
 
+            if &d == &org {
+                return Some(brute_force_prime_factor(d.try_into().unwrap()));
+            }
+
             n /= &d;
 
             if &d > &f {
@@ -298,6 +304,31 @@ impl Factorization {
         return Some(f.try_into().unwrap());
     }
 }
+
+fn brute_force_prime_factor(mut n: BigUint) -> BigUint {
+
+        let one = BigUint::one();
+        let two = &one + &one;
+
+        // STEP 1 | n divided by 2
+        while n.is_even() {
+            n = n / &two;
+        }
+
+        // STEP 2 | 3..sqrt(n) | Divide i by n. On failure, add 2 to i
+        let n_sqrt = n.sqrt().to_usize().unwrap();
+        
+        for mut i in 3..n_sqrt + 1 {
+            let divisor = BigUint::from(i);
+            while n.divides(&divisor) {
+                n /= &divisor;
+            }
+            i = i + 1usize;
+        }
+
+        return if n == one { BigUint::from(n_sqrt) } else { n };
+}
+
 
 #[derive(PartialEq)]
 enum SmallPrimeResult {
